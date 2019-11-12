@@ -43,7 +43,6 @@ class WeiClinic {
 
     removeStackFromEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
-        const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
         if (!stack) {
             throw "rm1"
         }

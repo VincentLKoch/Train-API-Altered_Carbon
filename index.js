@@ -91,6 +91,75 @@ app.post('/remove/:stackId', (req, res) => {
         }
     }
 })
+app.put('/implant/:stackId/:envelopeId?', (req, res) => {
+    const stackId = req.params.stackId
+    const envelopeId = req.params.envelopeId
+    try {
+        //stackId must exist and be a number
+        if (!stackId || !(stackId === '' + parseInt(stackId))) {
+            throw "sID"
+        }
+        getClinic().assignStackToEnvelope(stackId,envelopeId)
+        res.status(204).end();
+
+    } catch (error) {
+        console.warn(error)
+        //invalid stackID
+        if (error === "sID") {
+            res.status(400).json({
+                message: "Invalid call",
+                receive: {
+                    stackId: stackId
+                }
+            }).end();
+        } else if (error === 2) {
+
+            //catch error from assignStackToEnvelope :
+        } else if (error === "ad1") {
+            res.status(400).json({
+                message: "Can't find input stack",
+                message: "Unkown stack",
+                receive: {
+                    stackId: stackId,
+                    envelopeId: envelopeId
+                }
+            }).end();
+        } else if (error === "ad2") {
+            res.status(400).json({
+                message: "Can't find input envelope",
+                message: "Unkown envelope",
+                receive: {
+                    stackId: stackId,
+                    envelopeId: envelopeId
+                }
+            }).end();
+        } else if (error === "ad3") {
+            res.status(400).json({
+                message: "Can't find input stack",
+                message: "Unkown stack",
+                receive: {
+                    stackId: stackId,
+                }
+            }).end();
+        } else if (error === "ad4") {
+            res.status(404).json({
+                message: "Can't find an available envelope",
+                receive: {
+                    stackId: stackId,
+                }
+            }).end();  
+
+        } else {
+            console.error(error)
+            res.status(418).json({
+                message: "Unkown Error",
+                receive: {
+                    stackId: stackId
+                }
+            }).end();  
+        }   
+    }
+})
 const server = app.listen(port, () => {
     const port = server.address().port
     console.log("Server listening on port " + port + "...")
