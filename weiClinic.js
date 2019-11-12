@@ -25,58 +25,47 @@ class WeiClinic {
 
     assignStackToEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
-        const envelope = this.envelopes[idEnvelope] || this.envelopes.find(obj => {return obj.idStack === null})
+        const envelope = this.envelopes[idEnvelope] || this.envelopes.find(obj => { return obj.idStack === null })
 
-        if (envelope != undefined){
-            envelope.idStack = stack.id
-            stack.idEnvelope = envelope.id
+        if (!envelope) {
+            throw 1
         }
-        
-       else{ throw "enveleop is not availible"}
-
+        envelope.idStack = stack.id
+        stack.idEnvelope = envelope.id
     }
 
     removeStackFromEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
         const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
 
-        if (envelope != undefined){
-            envelope.idStack = null
-            stack.idEnvelope = null
+        if (!envelope) {
+            throw 2
         }
-        
-       else{ throw "stack isn't in envelope"}
-
+        envelope.idStack = null
+        stack.idEnvelope = null
     }
 
     killEnvelope(idEnvelope) {
         const envelope = this.envelopes[idEnvelope]
-        if (envelope != undefined){
+        if (!envelope || !envelope.idStack) {
+            throw 3
+        }
 
-            if (envelope.idStack != null) { 
-                const stack = this.stacks[envelope.idStack]
-                stack.idEnvelope = null;
-            }
-            
-            this.envelopes.splice(idEnvelope,1)
-         }
+        const stack = this.stacks[envelope.idStack]
+        stack.idEnvelope = null;
+        this.envelopes.splice(idEnvelope, 1)
 
-        else{ throw "envelope does not exist"}
     }
 
     destroyStack(idStack) {
         const stack = this.stacks[idStack]
-        if (stack != undefined){
+        if (!stack || !stack.idEnvelope) {
+            throw 4
+        }
 
-            if (stack.idEnvelope != null) { 
-                const envelope = this.envelopes[stack.idEnvelope]
-                envelope.idStack = null;
-            }
-            
-            this.stacks.splice(idStack,1)
-         }
-
-        else{ throw "stack does not exist"}
+        const envelope = this.envelopes[stack.idEnvelope]
+        envelope.idStack = null;
+        this.stacks.splice(idStack, 1)
     }
 }
 
