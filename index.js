@@ -40,6 +40,7 @@ app.get('/digitize', (req, res) => {
         }
     }
 }) //end digitize
+
 app.post('/remove/:stackId', (req, res) => {
     const stackId = req.params.stackId
     try {
@@ -60,13 +61,11 @@ app.post('/remove/:stackId', (req, res) => {
                     stackId: stackId
                 }
             }).end();
-        } else if (error === 2) {
 
             //catch error from removeStackFromEnvelope :
         } else if (error === "rm1") {
             res.status(400).json({
                 message: "Can't find input stack",
-                message: "Unkown stack",
                 receive: {
                     stackId: stackId
                 }
@@ -90,7 +89,56 @@ app.post('/remove/:stackId', (req, res) => {
             }).end();
         }
     }
+}) //end remove
+
+
+app.post('/kill/:envelopeId', (req, res) => {
+
+    const envelopeId = req.params.envelopeId
+    try {
+        //envelopeId must exist and be a number
+        if (!envelopeId || !(envelopeId === '' + parseInt(envelopeId))) {
+            throw "eID"
+        }
+        getClinic().killEnvelope(envelopeId)
+
+        res.status(204).end();
+
+    } catch (error) {
+        console.warn("error:")
+        console.warn(error)
+        //invalid envelopeId
+        if (error === "eID") {
+            res.status(400).json({
+                message: "Invalid call",
+                receive: {
+                    envelopeId: envelopeId
+                }
+            }).end();
+
+            //catch error from removeStackFromEnvelope :
+        } else if (error === "kil") {
+            res.status(400).json({
+                message: "Can't find input envelope",
+                receive: {
+                    envelopeId: envelopeId
+                }
+            }).end();
+
+            //Unkown
+        } else {
+            console.error(error)
+            res.status(418).json({
+                message: "Unkown Error",
+                receive: {
+                    envelopeId: envelopeId
+                }
+            }).end();
+        }
+    }
 })
+
+
 const server = app.listen(port, () => {
     const port = server.address().port
     console.log("Server listening on port " + port + "...")

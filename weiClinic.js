@@ -21,14 +21,14 @@ class WeiClinic {
     }
 
     assignStackToEnvelope(idStack, idEnvelope) {
-        const stack = this.stacks[idStack]
+        const stack = this.stacks.find(stack => { return stack.id == idStack })
 
         if (!stack) {
             throw "ad1" //400
         }
 
         if (idEnvelope) {
-            const envelope = this.envelopes[idEnvelope]
+            const envelope = this.envelopes.find(envelope => { return envelope.id == idEnvelope })
             if (!envelope) { throw "ad2" } //400
             if (!envelope.idStack) { throw "ad3" } //400
 
@@ -41,14 +41,13 @@ class WeiClinic {
         stack.idEnvelope = envelope.id
     }
 
-    removeStackFromEnvelope(idStack, idEnvelope) {
-        const stack = this.stacks[idStack]
-        const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
+    removeStackFromEnvelope(idStack) {
+        const stack = this.stacks.find(stack => { return stack.id == idStack })
         if (!stack) {
             throw "rm1"
         }
 
-        const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
+        const envelope = this.envelopes.find(envelope => { return envelope.id == stack.idEnvelope })
         if (!envelope) {
             throw "rm2"
         }
@@ -58,28 +57,25 @@ class WeiClinic {
     }
 
     killEnvelope(idEnvelope) {
-        const envelope = this.envelopes[idEnvelope]
+        const envelope = this.envelopes.find(obj => obj.id == idEnvelope)
         if (!envelope) {
             throw "kil"
         }
-
-
+        
+        //If envelope got a Stack we remove it first
         if (envelope.idStack) {
-            // this.stacks[envelope.idStack].idEnvelope = null
-            const stack = this.stacks[envelope.idStack]
-            stack.idEnvelope = null;
+            this.stacks.find(stack => { return stack.id == envelope.idStack }).idEnvelope = null
         }
-
-        this.envelopes.splice(idEnvelope, 1)
+        this.envelopes.splice(idEnvelope - 1, 1)
     }
 
     destroyStack(idStack) {
-        const stack = this.stacks[idStack]
+        const stack = this.stacks.find(stack => { return stack.id == idStack })
         if (!stack || !stack.idEnvelope) {
             throw "ds"
         }
         if (stack.idEnvelope) {
-            const envelope = this.envelopes[stack.idEnvelope]
+            const envelope = this.envelopes.find(envelope => { return envelope.id == stack.idEnvelope })
             envelope.idStack = null;
         }
 
