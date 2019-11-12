@@ -61,7 +61,7 @@ class WeiClinic {
         if (!envelope) {
             throw "kil"
         }
-        
+
         //If envelope got a Stack we remove it first
         if (envelope.idStack) {
             this.stacks.find(stack => { return stack.id == envelope.idStack }).idEnvelope = null
