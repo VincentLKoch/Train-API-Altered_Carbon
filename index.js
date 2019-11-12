@@ -76,7 +76,18 @@ app.post('/remove/:stackId', (req, res) => {
                     stackId: stackId
                 }
             }).end();
-        } else {
+        }
+
+        else if (error === 6) {
+            res.status(400).json({
+                message: "Can't find the input stack",
+                receive: {
+                    stackId: stackId
+                }
+            }).end(); 
+        }
+            
+        else {
             res.status(418).json({
                 message: "Unkown Error",
                 receive: {

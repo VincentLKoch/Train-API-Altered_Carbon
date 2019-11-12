@@ -25,22 +25,26 @@ class WeiClinic {
 
     assignStackToEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
-        const envelope = this.envelopes[idEnvelope] || this.envelopes.find(obj => { return obj.idStack === null })
+        if(!stack){throw 5}
 
+        const envelope = this.envelopes[idEnvelope] || this.envelopes.find(obj => { return obj.idStack === null })
         if (!envelope) {
             throw 1
         }
+
         envelope.idStack = stack.id
         stack.idEnvelope = envelope.id
     }
 
     removeStackFromEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
-        const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
+        if(!stack){throw 6}
 
+        const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
         if (!envelope) {
             throw 2
         }
+
         envelope.idStack = null
         stack.idEnvelope = null
     }
