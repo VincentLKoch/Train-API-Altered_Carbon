@@ -6,6 +6,7 @@ class WeiClinic {
         this.envelopes = []
         this.stacks = []
     }
+
     create(realGender, name, age) {
         const stackId = getNewId(this.stacks)
         const envelopeId = getNewId(this.envelopes)
@@ -18,16 +19,24 @@ class WeiClinic {
             envelope: newEnvelope
         }
     }
+
     assignStackToEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
+
         if (!stack) {
-            throw "ad1"
+            throw "ad1" //400
         }
 
-        const envelope = this.envelopes[idEnvelope] || this.envelopes.find(obj => { return obj.idStack === null })
-        if (!envelope) {
-            throw "ad2"
+        if (idEnvelope) {
+            const envelope = this.envelopes[idEnvelope]
+            if (!envelope) { throw "ad2" } //400
+            if (!envelope.idStack) { throw "ad3" } //400
+
+        } else {
+            const envelope = this.envelopes.find(obj => { return obj.idStack === null })
+            if (!envelope) { throw "ad4" } //404
         }
+
         envelope.idStack = stack.id
         stack.idEnvelope = envelope.id
     }
@@ -47,16 +56,18 @@ class WeiClinic {
         envelope.idStack = null
         stack.idEnvelope = null
     }
-    
+
     killEnvelope(idEnvelope) {
         const envelope = this.envelopes[idEnvelope]
         if (!envelope) {
             throw "kil"
         }
 
-        if(envelope.idStack){
-        const stack = this.stacks[envelope.idStack]
-        stack.idEnvelope = null;
+
+        if (envelope.idStack) {
+            // this.stacks[envelope.idStack].idEnvelope = null
+            const stack = this.stacks[envelope.idStack]
+            stack.idEnvelope = null;
         }
 
         this.envelopes.splice(idEnvelope, 1)
@@ -67,12 +78,12 @@ class WeiClinic {
         if (!stack || !stack.idEnvelope) {
             throw "ds"
         }
-        if(stack.idEnvelope){
+        if (stack.idEnvelope) {
             const envelope = this.envelopes[stack.idEnvelope]
             envelope.idStack = null;
         }
 
-            this.stacks.splice(idStack, 1)
+        this.stacks.splice(idStack, 1)
     }
 }
 const weiClinic = new WeiClinic()
