@@ -156,11 +156,10 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
             res.status(400).json({
                 message: "Invalid call",
                 receive: {
-                    stackId: stackId
+                    stackId: stackId,
+                    envelopeId: envelopeId
                 }
             }).end();
-        } else if (error === 2) {
-
             //catch error from assignStackToEnvelope :
         } else if (error === "ad1") {
             res.status(400).json({
@@ -182,10 +181,11 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
             }).end();
         } else if (error === "ad3") {
             res.status(400).json({
-                message: "Can't find input stack",
+                message: "Envelope already got a stack inside",
                 message: "Unkown stack",
                 receive: {
                     stackId: stackId,
+                    envelopeId: envelopeId
                 }
             }).end();
         } else if (error === "ad4") {
@@ -193,6 +193,7 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
                 message: "Can't find an available envelope",
                 receive: {
                     stackId: stackId,
+                    envelopeId: envelopeId
                 }
             }).end();
 
@@ -201,7 +202,8 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
             res.status(418).json({
                 message: "Unkown Error",
                 receive: {
-                    stackId: stackId
+                    stackId: stackId,
+                    envelopeId: envelopeId
                 }
             }).end();
         }
