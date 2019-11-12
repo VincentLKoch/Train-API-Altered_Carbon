@@ -6,6 +6,7 @@ class WeiClinic {
         this.envelopes = []
         this.stacks = []
     }
+
     create(realGender, name, age) {
         const stackId = getNewId(this.stacks)
         const envelopeId = getNewId(this.envelopes)
