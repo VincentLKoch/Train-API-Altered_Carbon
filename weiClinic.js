@@ -30,10 +30,9 @@ class WeiClinic {
         if (envelope != undefined){
             envelope.idStack = stack.id
             stack.idEnvelope = envelope.id
-            return true
         }
         
-       else{ return false}
+       else{ throw "enveleop is not availible"}
 
     }
 
@@ -44,10 +43,9 @@ class WeiClinic {
         if (envelope != undefined){
             envelope.idStack = null
             stack.idEnvelope = null
-            return true
         }
         
-       else{ return false}
+       else{ throw "stack isn't in envelope"}
 
     }
 
@@ -61,10 +59,9 @@ class WeiClinic {
             }
             
             this.envelopes.splice(idEnvelope,1)
-            return true
          }
 
-        else{ return false}
+        else{ throw "envelope does not exist"}
     }
 
     destroyStack(idStack) {
@@ -77,10 +74,9 @@ class WeiClinic {
             }
             
             this.stacks.splice(idStack,1)
-            return true
          }
 
-        else{ return false}
+        else{ throw "stack does not exist"}
     }
 }
 
