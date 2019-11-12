@@ -40,7 +40,6 @@ class WeiClinic {
         const stack = this.stacks[idStack]
         const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
 
-<<<<<<< HEAD
         if (envelope != undefined){
             envelope.idStack = null
             stack.idEnvelope = null
@@ -48,13 +47,6 @@ class WeiClinic {
         
        else{ throw "stack isn't in envelope"}
 
-=======
-        if (!envelope) {
-            throw 2
-        }
-        envelope.idStack = null
-        stack.idEnvelope = null
->>>>>>> parent of a3a0a55... catch throw stack unknow in removeStackFromEnvelope
     }
 
     killEnvelope(idEnvelope) {
