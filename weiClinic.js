@@ -37,7 +37,6 @@ class WeiClinic {
 
         const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
         if (!envelope) {
-            throw 2
             throw 22
         }
 
