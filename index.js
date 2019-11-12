@@ -1,11 +1,8 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-
 import { getClinic } from './weiClinic'
-
 const app = express()
 const port = 8081
-
 app.use(bodyParser.json())
 app.use(function (_req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
@@ -13,10 +10,8 @@ app.use(function (_req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
     next()
 })
-
 app.get('/digitize', (req, res) => {
     const gender = req.query.gender, name = req.query.name, age = req.query.age
-
     //Check if the 3 parameter are present and age is a int
     if (gender && name && age && (age === '' + parseInt(age))) {
         const createdElements = getClinic().create(gender, name, parseInt(age))
@@ -32,7 +27,6 @@ app.get('/digitize', (req, res) => {
                     age: age
                 }
             }).end();
-
         } else { //missing parameter(s)
             res.status(400).json({
                 message: "missing parameter",
@@ -46,22 +40,19 @@ app.get('/digitize', (req, res) => {
         }
     }
 }) //end digitize
-
-
 app.post('/remove/:stackId', (req, res) => {
     const stackId = req.params.stackId
-
     try {
         //stackId must exist and be a number
         if (!stackId || !(stackId === '' + parseInt(stackId))) {
             throw "sID"
         }
-
         getClinic().removeStackFromEnvelope(stackId)
         res.status(204).end();
 
     } catch (error) {
         console.warn(error)
+        //invalid stackID
         if (error === "sID") {
             res.status(400).json({
                 message: "Invalid call",
@@ -70,13 +61,27 @@ app.post('/remove/:stackId', (req, res) => {
                 }
             }).end();
         } else if (error === 2) {
+
+            //catch error from removeStackFromEnvelope :
+        } else if (error === 21) {
             res.status(400).json({
                 message: "Can't find envelope with input stack",
+                message: "Unkown stack",
                 receive: {
                     stackId: stackId
                 }
             }).end();
+        } else if (error === 22) {
+            res.status(400).json({
+                message: "Stack don't have envelope",
+                receive: {
+                    stackId: stackId
+                }
+            }).end();
+
+            //Unkown
         } else {
+            console.error(error)
             res.status(418).json({
                 message: "Unkown Error",
                 receive: {
@@ -86,10 +91,8 @@ app.post('/remove/:stackId', (req, res) => {
         }
     }
 })
-
 const server = app.listen(port, () => {
     const port = server.address().port
     console.log("Server listening on port " + port + "...")
 })
-
 export default server
