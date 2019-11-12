@@ -17,20 +17,33 @@ app.use(function (_req, res, next) {
 app.get('/digitize', (req, res) => {
     const gender = req.query.gender, name = req.query.name, age = req.query.age
 
-    if (gender && name && age) {
-        const createdElements = getClinic().create(gender, name, age)
+    //Check if the 3 parameter are present and age is a int
+    if (gender && name && age && (age === '' + parseInt(age))) {
+        const createdElements = getClinic().create(gender, name, parseInt(age))
         res.status(200).set({ 'Content-Type': 'application/json' }).json(createdElements).end();
     } else {
-        //force to parse(stringify() to keep the key:null when argument is missing from call (adding replacer)
-        res.status(400).json({
-            message: "missing arguments",
-            receive: {
-                gender: gender,
-                name: name,
-                age: age
-            },
-            needed: ["gender", "name", "age"]
-        }).end();
+        //if all parameters are here but age isn't a int : 
+        if (gender && name && age) {
+            res.status(400).json({
+                message: "Age parameter must be a number",
+                receive: {
+                    gender: gender,
+                    name: name,
+                    age: age
+                }
+            }).end();
+
+        } else { //missing parameter(s)
+            res.status(400).json({
+                message: "missing parameter",
+                receive: {
+                    gender: gender,
+                    name: name,
+                    age: age
+                },
+                needed: ["gender", "name", "age"]
+            }).end();
+        }
     }
 }) //end digitize
 
