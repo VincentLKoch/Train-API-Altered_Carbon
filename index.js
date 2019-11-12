@@ -48,56 +48,6 @@ app.get('/digitize', (req, res) => {
 }) //end digitize
 
 
-app.post('/remove/:stackId', (req, res) => {
-    const stackId = req.params.stackId
-
-    try {
-        //stackId must exist and be a number
-        if (!stackId || !(stackId === '' + parseInt(stackId))) {
-            throw "sID"
-        }
-
-        getClinic().removeStackFromEnvelope(stackId)
-        res.status(204).end();
-
-    } catch (error) {
-        console.warn(error)
-        if (error === "sID") {
-            res.status(400).json({
-                message: "Invalid call",
-                receive: {
-                    stackId: stackId
-                }
-            }).end();
-        } else if (error === 2) {
-            res.status(400).json({
-                message: "Can't find envelope with input stack",
-                receive: {
-                    stackId: stackId
-                }
-            }).end();
-        }
-
-        else if (error === 6) {
-            res.status(400).json({
-                message: "Can't find the input stack",
-                receive: {
-                    stackId: stackId
-                }
-            }).end(); 
-        }
-            
-        else {
-            res.status(418).json({
-                message: "Unkown Error",
-                receive: {
-                    stackId: stackId
-                }
-            }).end();
-        }
-    }
-})
-
 const server = app.listen(port, () => {
     const port = server.address().port
     console.log("Server listening on port " + port + "...")
