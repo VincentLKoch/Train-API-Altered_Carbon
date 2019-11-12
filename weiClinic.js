@@ -28,7 +28,7 @@ class WeiClinic {
         const envelope = this.envelopes[idEnvelope] || this.envelopes.find(obj => { return obj.idStack === null })
 
         if (!envelope) {
-            throw 1
+            throw "im"
         }
         envelope.idStack = stack.id
         stack.idEnvelope = envelope.id
@@ -37,12 +37,12 @@ class WeiClinic {
     removeStackFromEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
         if (!stack) {
-            throw 21
+            throw "rm1"
         }
 
         const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
         if (!envelope) {
-            throw 22
+            throw "rm2"
         }
         
         envelope.idStack = null
@@ -52,7 +52,7 @@ class WeiClinic {
     killEnvelope(idEnvelope) {
         const envelope = this.envelopes[idEnvelope]
         if (!envelope || !envelope.idStack) {
-            throw 3
+            throw "ke"
         }
 
         const stack = this.stacks[envelope.idStack]
@@ -64,7 +64,7 @@ class WeiClinic {
     destroyStack(idStack) {
         const stack = this.stacks[idStack]
         if (!stack || !stack.idEnvelope) {
-            throw 4
+            throw "ds"
         }
 
         const envelope = this.envelopes[stack.idEnvelope]

@@ -71,14 +71,14 @@ app.post('/remove/:stackId', (req, res) => {
             }).end();
 
             //catch error from removeStackFromEnvelope :
-        } else if (error === 21) {
+        } else if (error === "rm1") {
             res.status(400).json({
                 message: "Unkown stack",
                 receive: {
                     stackId: stackId
                 }
             }).end();
-        } else if (error === 22) {
+        } else if (error === "rm2") {
             res.status(400).json({
                 message: "Stack don't have envelope",
                 receive: {
