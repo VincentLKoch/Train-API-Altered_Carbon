@@ -1,34 +1,32 @@
 import { getNewId } from './idHelper'
 import CorticalStack from './corticalStack'
 import Envelope from './Envelope'
-
 class WeiClinic {
     constructor() {
         this.envelopes = []
         this.stacks = []
     }
-
     create(realGender, name, age) {
         const stackId = getNewId(this.stacks)
         const envelopeId = getNewId(this.envelopes)
         const newStack = new CorticalStack(stackId, realGender, name, age, envelopeId)
         const newEnvelope = new Envelope(envelopeId, realGender, age, stackId)
-
         this.stacks.push(newStack)
         this.envelopes.push(newEnvelope)
-
         return {
             corticalStack: newStack,
             envelope: newEnvelope
         }
     }
-
     assignStackToEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
-        const envelope = this.envelopes[idEnvelope] || this.envelopes.find(obj => { return obj.idStack === null })
+        if (!stack) {
+            throw "ad1"
+        }
 
+        const envelope = this.envelopes[idEnvelope] || this.envelopes.find(obj => { return obj.idStack === null })
         if (!envelope) {
-            throw "im"
+            throw "ad2"
         }
         envelope.idStack = stack.id
         stack.idEnvelope = envelope.id
@@ -36,6 +34,7 @@ class WeiClinic {
 
     removeStackFromEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
+        const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
         if (!stack) {
             throw "rm1"
         }
@@ -44,21 +43,23 @@ class WeiClinic {
         if (!envelope) {
             throw "rm2"
         }
-        
+
         envelope.idStack = null
         stack.idEnvelope = null
     }
-
+    
     killEnvelope(idEnvelope) {
         const envelope = this.envelopes[idEnvelope]
-        if (!envelope || !envelope.idStack) {
-            throw "ke"
+        if (!envelope) {
+            throw "kil"
         }
 
+        if(envelope.idStack){
         const stack = this.stacks[envelope.idStack]
         stack.idEnvelope = null;
-        this.envelopes.splice(idEnvelope, 1)
+        }
 
+        this.envelopes.splice(idEnvelope, 1)
     }
 
     destroyStack(idStack) {
@@ -66,13 +67,13 @@ class WeiClinic {
         if (!stack || !stack.idEnvelope) {
             throw "ds"
         }
+        if(stack.idEnvelope){
+            const envelope = this.envelopes[stack.idEnvelope]
+            envelope.idStack = null;
+        }
 
-        const envelope = this.envelopes[stack.idEnvelope]
-        envelope.idStack = null;
-        this.stacks.splice(idStack, 1)
+            this.stacks.splice(idStack, 1)
     }
 }
-
 const weiClinic = new WeiClinic()
-
 export const getClinic = () => weiClinic
