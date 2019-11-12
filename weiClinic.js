@@ -30,7 +30,7 @@ class WeiClinic {
         if (idEnvelope) {
             const envelope = this.envelopes.find(envelope => { return envelope.id == idEnvelope })
             if (!envelope) { throw "ad2" } //400
-            if (!envelope.idStack) { throw "ad3" } //400
+            if (envelope.idStack) { throw "ad3" } //400
 
         } else {
             const envelope = this.envelopes.find(obj => { return obj.idStack === null })
@@ -71,7 +71,7 @@ class WeiClinic {
 
     destroyStack(idStack) {
         const stack = this.stacks.find(stack => { return stack.id == idStack })
-        if (!stack || !stack.idEnvelope) {
+        if (!stack) {
             throw "ds"
         }
         if (stack.idEnvelope) {
