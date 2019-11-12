@@ -61,7 +61,7 @@ app.post('/remove/:stackId', (req, res) => {
         res.status(204).end();
 
     } catch (error) {
-        console.warn(error)
+        //invalid stackID
         if (error === "sID") {
             res.status(400).json({
                 message: "Invalid call",
@@ -69,14 +69,26 @@ app.post('/remove/:stackId', (req, res) => {
                     stackId: stackId
                 }
             }).end();
-        } else if (error === 2) {
+
+            //catch error from removeStackFromEnvelope :
+        } else if (error === 21) {
             res.status(400).json({
-                message: "Can't find envelope with input stack",
+                message: "Unkown stack",
                 receive: {
                     stackId: stackId
                 }
             }).end();
+        } else if (error === 22) {
+            res.status(400).json({
+                message: "Stack don't have envelope",
+                receive: {
+                    stackId: stackId
+                }
+            }).end();
+
+            //Unkown
         } else {
+            console.error(error)
             res.status(418).json({
                 message: "Unkown Error",
                 receive: {

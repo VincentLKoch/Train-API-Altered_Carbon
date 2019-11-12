@@ -36,11 +36,15 @@ class WeiClinic {
 
     removeStackFromEnvelope(idStack, idEnvelope) {
         const stack = this.stacks[idStack]
-        const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
-
-        if (!envelope) {
-            throw 2
+        if (!stack) {
+            throw 21
         }
+
+        const envelope = this.envelopes[idEnvelope] || this.envelopes[stack.idEnvelope]
+        if (!envelope) {
+            throw 22
+        }
+        
         envelope.idStack = null
         stack.idEnvelope = null
     }
