@@ -1,6 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import { getClinic } from './weiClinic'
+
 const app = express()
 const port = 8081
 app.use(bodyParser.json())
@@ -90,7 +91,6 @@ app.post('/remove/:stackId', (req, res) => {
     }
 }) //end remove
 
-
 app.post('/kill/:envelopeId', (req, res) => {
 
     const envelopeId = req.params.envelopeId
@@ -160,7 +160,6 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
         } else if (error === "ad1") {
             res.status(400).json({
                 message: "Can't find input stack",
-                message: "Unkown stack",
                 receive: {
                     stackId: stackId,
                     envelopeId: envelopeId
@@ -168,8 +167,7 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
             }).end();
         } else if (error === "ad2") {
             res.status(400).json({
-                message: "Can't find input envelope",
-                message: "Unkown envelope",
+                message: "Stack already inside a envelope",
                 receive: {
                     stackId: stackId,
                     envelopeId: envelopeId
@@ -177,14 +175,21 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
             }).end();
         } else if (error === "ad3") {
             res.status(400).json({
-                message: "Envelope already got a stack inside",
-                message: "Unkown stack",
+                message: "Can't find input envelope",
                 receive: {
                     stackId: stackId,
                     envelopeId: envelopeId
                 }
             }).end();
         } else if (error === "ad4") {
+            res.status(400).json({
+                message: "Envelope already got a stack inside",
+                receive: {
+                    stackId: stackId,
+                    envelopeId: envelopeId
+                }
+            }).end();
+        } else if (error === "ad5") {
             res.status(404).json({
                 message: "Can't find an available envelope",
                 receive: {
@@ -205,7 +210,6 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
         }
     }
 })
-
 
 app.delete('/truedeath/:stackId', (req, res) => {
     const stackId = req.params.stackId
