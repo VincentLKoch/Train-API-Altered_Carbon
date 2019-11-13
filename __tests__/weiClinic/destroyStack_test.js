@@ -9,18 +9,28 @@ describe('Destroy Stack test', () => {
 
     })
 
-    it('Test Working', () => {
-        weiClinic.envelopes = [{ id: 1, idStack: null }]
+    it('The stack is destroyed', () => {
+        weiClinic.stacks = [{ id: 1, idEnvelope: null }]
 
         weiClinic.destroyStack(1)
 
         expect(weiClinic.envelopes[1]).toBeUndefined()
     });
 
-    it('The stack is not finded', () => {
-        weiClinic.stack = [{ id: 1, idEnvelope: null}]
+    it('The stack and the envelope are destroyed', () => {
+        weiClinic.envelopes = [{ id: 1, idStack: 1 }]
+        weiClinic.stacks = [{ id: 1, idEnvelope: 1 }]
 
-        expect(() => { weiClinic.destroyStack(3)}).toThrow("ds")
+        weiClinic.destroyStack(1)
+
+        expect(weiClinic.stacks).toEqual([])
+        expect(weiClinic.envelopes).toEqual([])
+    });
+
+    it('The stack is not finded', () => {
+        weiClinic.stacks = []
+
+        expect(() => { weiClinic.destroyStack(3) }).toThrow("ds")
     });
 
 })
