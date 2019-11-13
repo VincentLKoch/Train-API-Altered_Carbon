@@ -27,13 +27,13 @@ class WeiClinic {
             throw "ad1" //400
         }
 
-        if(!stack.idEnvelope === null){ throw "ad2"}
-        
+        if (!(stack.idEnvelope === null)) { throw "ad2" }
+
         let envelope
         if (idEnvelope) {
             envelope = this.envelopes.find(env => { return env.id == idEnvelope })
             if (!envelope) { throw "ad3" } //400
-            if (!envelope.idStack === null) { throw "ad4" } //envelope already have a stack, error 400
+            if (!(envelope.idStack === null)) { throw "ad4" } //envelope already have a stack, error 400
 
         } else {
             envelope = this.envelopes.find(env => { return env.idStack === null })
