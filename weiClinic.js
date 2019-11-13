@@ -21,19 +21,20 @@ class WeiClinic {
     }
 
     assignStackToEnvelope(idStack, idEnvelope) {
-        const stack = this.stacks.find(stack => { return stack.id == idStack })
+        const stack = this.stacks.find(sta => { return sta.id == idStack })
 
         if (!stack) {
             throw "ad1" //400
         }
 
+        let envelope
         if (idEnvelope) {
-            const envelope = this.envelopes.find(envelope => { return envelope.id == idEnvelope })
+            envelope = this.envelopes.find(env => { return env.id == idEnvelope })
             if (!envelope) { throw "ad2" } //400
             if (!envelope.idStack === null) { throw "ad3" } //envelope already have a stack, error 400
 
         } else {
-            const envelope = this.envelopes.find(obj => { return obj.idStack === null })
+            envelope = this.envelopes.find(env => { return env.idStack === null })
             if (!envelope) { throw "ad4" } //404
         }
 
@@ -42,12 +43,12 @@ class WeiClinic {
     }
 
     removeStackFromEnvelope(idStack) {
-        const stack = this.stacks.find(stack => { return stack.id == idStack })
+        const stack = this.stacks.find(sta => { return sta.id == idStack })
         if (!stack) {
             throw "rm1"
         }
 
-        const envelope = this.envelopes.find(envelope => { return envelope.id == stack.idEnvelope })
+        const envelope = this.envelopes.find(env => { return env.id == stack.idEnvelope })
         if (!envelope) {
             throw "rm2"
         }
@@ -57,29 +58,28 @@ class WeiClinic {
     }
 
     killEnvelope(idEnvelope) {
-        const envelope = this.envelopes.find(obj => obj.id == idEnvelope)
+        const envelope = this.envelopes.find(env => env.id == idEnvelope)
         if (!envelope) {
             throw "kil"
         }
 
         //If envelope got a Stack we remove it first
         if (envelope.idStack) {
-            this.stacks.find(stack => { return stack.id == envelope.idStack }).idEnvelope = null
+            this.stacks.find(sta => { return sta.id == envelope.idStack }).idEnvelope = null
         }
-        this.envelopes.splice(idEnvelope - 1, 1)
+        this.envelopes = this.envelopes.filter(env => { return !(env.id == idEnvelope) })
     }
 
     destroyStack(idStack) {
-        const stack = this.stacks.find(stack => { return stack.id == idStack })
+        const stack = this.stacks.find(sta => { return sta.id == idStack })
         if (!stack) {
             throw "ds"
         }
-
+        //if stack is in a envelope the envelope is erase too
         if (stack.idEnvelope) {
-            this.envelopes.find(envelope => { return envelope.id == stack.idEnvelope }).idStack = null;
+            this.envelopes = this.envelopes.filter(env => { return !(env.id === stack.idEnvelope) })
         }
-
-        this.stacks.splice(idStack, 1)
+        this.stacks = this.stacks.filter(sta => { return !(sta.id == idStack) })
     }
 }
 const weiClinic = new WeiClinic()

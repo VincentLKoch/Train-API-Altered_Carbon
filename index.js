@@ -52,7 +52,6 @@ app.post('/remove/:stackId', (req, res) => {
         res.status(204).end();
 
     } catch (error) {
-        console.warn(error)
         //invalid stackID
         if (error === "sID") {
             res.status(400).json({
@@ -105,8 +104,6 @@ app.post('/kill/:envelopeId', (req, res) => {
         res.status(204).end();
 
     } catch (error) {
-        console.warn("error:")
-        console.warn(error)
         //invalid envelopeId
         if (error === "eID") {
             res.status(400).json({
@@ -150,7 +147,6 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
         res.status(204).end();
 
     } catch (error) {
-        console.warn(error)
         //invalid stackID
         if (error === "sID") {
             res.status(400).json({
@@ -210,6 +206,48 @@ app.put('/implant/:stackId/:envelopeId?', (req, res) => {
     }
 })
 
+
+app.delete('/truedeath/:stackId', (req, res) => {
+    const stackId = req.params.stackId
+    try {
+        //stackId must exist and be a number
+        if (!stackId || !(stackId === '' + parseInt(stackId))) {
+            throw "sID"
+        }
+        getClinic().destroyStack(stackId)
+        res.status(204).end();
+
+    } catch (error) {
+        //invalid stackID
+        if (error === "sID") {
+            res.status(400).json({
+                message: "Invalid call",
+                receive: {
+                    stackId: stackId
+                }
+            }).end();
+
+            //stackId unkown
+        } else if (error === "ds") {
+            res.status(400).json({
+                message: "Can't find input stack",
+                receive: {
+                    stackId: stackId
+                }
+            }).end();
+
+            //Unkown
+        } else {
+            console.error(error)
+            res.status(418).json({
+                message: "Unkown Error",
+                receive: {
+                    stackId: stackId
+                }
+            }).end();
+        }
+    }
+})
 
 const server = app.listen(port, () => {
     const port = server.address().port
