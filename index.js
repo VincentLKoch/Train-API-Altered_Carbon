@@ -78,6 +78,14 @@ app.post('/remove/:stackId', (req, res) => {
                 }
             }).end();
 
+        } else if (error === "rm3") {
+            res.status(400).json({
+                message: "Can't find stack's envelope",
+                receive: {
+                    stackId: stackId
+                }
+            }).end();
+
             //Unkown
         } else {
             console.error(error)

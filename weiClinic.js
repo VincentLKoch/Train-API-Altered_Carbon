@@ -46,13 +46,19 @@ class WeiClinic {
 
     removeStackFromEnvelope(idStack) {
         const stack = this.stacks.find(sta => { return sta.id == idStack })
-        if (!stack) {
+        if (!stack) { //stack not found
             throw "rm1"
         }
 
-        const envelope = this.envelopes.find(env => { return env.id == stack.idEnvelope })
-        if (!envelope) {
+        //stack isn't inside an envelope
+        if (!stack.idEnvelope) {
             throw "rm2"
+        }
+
+        const envelope = this.envelopes.find(env => { return env.id == stack.idEnvelope })
+        //can't find envelope
+        if (!envelope) { 
+            throw "rm3"
         }
 
         envelope.idStack = null
@@ -61,7 +67,7 @@ class WeiClinic {
 
     killEnvelope(idEnvelope) {
         const envelope = this.envelopes.find(env => env.id == idEnvelope)
-        if (!envelope) {
+        if (!envelope) { //not found
             throw "kil"
         }
 
