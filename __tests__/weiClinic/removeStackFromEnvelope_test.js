@@ -18,7 +18,7 @@ describe('removeStackFromEnvelope test', () => {
         expect(weiClinic.stacks[0].idEnvelope).toBeNull()
         expect(weiClinic.envelopes[0].idStack).toBeNull()
     });
-
+    
     it('Stack not found', () => {
         weiClinic.stacks = []
         expect(() => { weiClinic.removeStackFromEnvelope(1) }).toThrow("rm1")
@@ -32,7 +32,7 @@ describe('removeStackFromEnvelope test', () => {
     it("Can't find stack's envelope", () => {
         weiClinic.stacks = [{ id: 1, idEnvelope: 1 }]
         weiClinic.envelopes = []
-        
+
         expect(() => { weiClinic.removeStackFromEnvelope(1) }).toThrow("rm3")
     });
 })
