@@ -4,7 +4,7 @@ class CorticalStack {
         this.realGender = realGender
         this.name = name
         this.age = age
-        this.idEnvelope = idEnvelope
+        this.idEnvelope = idEnvelope || null
     }
 }
 
