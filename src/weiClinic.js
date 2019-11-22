@@ -214,8 +214,7 @@ class WeiClinic {
 
     destroyStack(idStack) {
         const stacks = this.getStackData()
-        const envelopes = this.getEnvelopeData()
-
+     ]
         const stack = stacks.find(sta => { return sta.id == idStack })
         if (!stack) {
             throw "ds"
@@ -224,7 +223,7 @@ class WeiClinic {
         if (stack.idEnvelope) {
             this.removeEnvelopeData(stack.idEnvelope)
         }
-        
+
         this.removeStackData(idStack)
         }
 }
