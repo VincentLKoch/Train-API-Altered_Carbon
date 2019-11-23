@@ -57,10 +57,8 @@ class WeiClinic {
 
     async removeStackFromEnvelope(idStack) {
         try {
-            const stacks = await this.dal.getStackData()
-            const envelopes = await this.dal.getEnvelopeData()
+            const stack = await this.dal.getStackById(idStack)
 
-            const stack = await stacks.find(sta => { return sta.id == idStack })
             if (!stack) { //stack not found
                 throw "rm1"
             }
@@ -70,17 +68,15 @@ class WeiClinic {
                 throw "rm2"
             }
 
-            const envelope = await envelopes.find(env => { return env.id == stack.idEnvelope })
+            const envelope = await this.dal.getStackById(stack.idEnvelope)
             //can't find envelope
             if (!envelope) {
                 throw "rm3"
             }
 
-            envelope.idStack = null
-            stack.idEnvelope = null
-
-            await this.dal.saveStackData(stack)
-            await this.dal.saveEnvelopeData(envelope)
+            //removing stack from envelope
+            await this.dal.moveStackToEnvelope(stack.id, null)
+            await this.dal.moveEnvelopeToStack(stack.idEnvelope, null)
         } catch (error) {
             throw error
         }
