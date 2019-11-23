@@ -58,7 +58,7 @@ Docker ps
 `list all docker including killed one :`<br>
 
 ```bash
-Docker ps -l
+Docker ps -a
 ```
 `kill docker :`<br>
 
