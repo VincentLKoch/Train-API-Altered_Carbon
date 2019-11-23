@@ -43,28 +43,12 @@ async getEnvelopeData(){
     }
 }   
 
-  async add(name, age) {
-    const connection = await this.connect()
-
-    try {
-      const dataRepository = connection.getRepository(TestData)
-      const newData = new TestData(null, name, age)
-
-      await dataRepository.save(newData)
-      return newData
-    } catch (err) {
-      console.error(err.message)
-      throw err
-    } finally {
-      await connection.close()
-    }
-  }
-
 async saveStackData(Sta){
     const connection = await this.connect()
     try{
         const dataRepositoryStacks = connection.getRepository(CorticalStack)
         await dataRepositoryStacks.save(Sta)
+        return Sta
     }catch(err){
         console.error(err.message)
     }finally{
@@ -77,6 +61,7 @@ async saveEnvelopeData(Envel){
     try{
         const dataRepositoryEnvelopes = connection.getRepository(Envelope)
         await dataRepositoryEnvelopes.save(Envel)
+        return Envel
     }catch(err){
         console.error(err.message)
     }finally{
