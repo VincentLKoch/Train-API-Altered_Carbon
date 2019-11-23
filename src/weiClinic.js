@@ -6,6 +6,7 @@ class WeiClinic {
     constructor() {
     }
 
+
    async create(realGender, name, age) {
         const dal = new Dal()
         try{
