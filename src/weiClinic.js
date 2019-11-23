@@ -13,14 +13,14 @@ class WeiClinic {
         const newStack = new CorticalStack(null, realGender, name, age, null)
         const newEnvelope = new Envelope(null, realGender, age, null)
 
-        await dal.saveStackData(newStack)
-        await dal.saveEnvelopeData(newEnvelope)
+        newStack = await dal.saveStackData(newStack)
+        newEnvelope = await dal.saveEnvelopeData(newEnvelope)
 
         newEnvelope.idStack = newStack.id
         newStack.idEnvelope = newEnvelope.id
 
-        await dal.saveStackData(newStack)
-        await dal.saveEnvelopeData(newEnvelope)
+        newStack = await dal.saveStackData(newStack)
+        newEnvelope = await dal.saveEnvelopeData(newEnvelope)
 
         return {
             corticalStack: newStack,
