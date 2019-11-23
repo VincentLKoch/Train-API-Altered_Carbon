@@ -28,7 +28,6 @@ describe('assignStackToEnvelope test', () => {
         expect(weiClinic.dal.moveEnvelopeToStack).toHaveBeenCalledWith(2,1)
         expect(weiClinic.dal.getFirstEmptyEnvelope).toBeCalledTimes(1)
        } catch(error){
-           expect(error).toBeNull()
         }
    
     });
