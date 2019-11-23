@@ -30,7 +30,7 @@ class Dal {
             console.error(err.message)
             throw err
         } finally {
-            connection.close()
+            await connection.close()
         }
     }
 
@@ -41,94 +41,105 @@ class Dal {
             return await dataRepositoryEnvelopes.find()
         } catch (err) {
             console.error(err.message)
+            throw err
         } finally {
-            connection.close()
+            await connection.close()
         }
     }
 
-    async saveStackData(Sta) {
+    async digitize(newStack, newEnvelope) {
         const connection = await this.connect()
         try {
+            //First get Repository
             const dataRepositoryStacks = connection.getRepository(CorticalStack)
-            await dataRepositoryStacks.save(Sta)
-            return Sta
-        } catch (err) {
-            console.error(err.message)
-        } finally {
-            connection.close()
-        }
-    }
-
-    async saveEnvelopeData(Envel) {
-        const connection = await this.connect()
-        try {
             const dataRepositoryEnvelopes = connection.getRepository(Envelope)
-            await dataRepositoryEnvelopes.save(Envel)
-            return Envel
+
+            //We put newStack in SQL
+            await dataRepositoryStacks.save(newStack)
+            //Since we got stack id we use it
+            newEnvelope.stackId = newStack.id
+
+            //We save Envelope
+            await dataRepositoryEnvelopes.save(newEnvelope)
+
+            //Now we have envelope Id we update it on stack
+            newStack.envelopeId = newEnvelope.id
+            //and update on SQL
+            await dataRepositoryStacks.save(newStack)
+
+            return newStack, newEnvelope
+
         } catch (err) {
             console.error(err.message)
+            throw err
         } finally {
-            connection.close()
+            await connection.close()
         }
     }
 
-    async removeStackData(StaId) {
+    async removeStackData(stackId) {
         const connection = await this.connect()
         try {
-            await connection.query(
-                `DELETE FROM CorticalStacks WHERE id = ?`,
-                [StaId], error => {
-                    if (error)
-                        return console.error(error.message);
-                })
-
+            await connection
+                .createQueryBuilder()
+                .delete()
+                .from(CorticalStack)
+                .where("id=:id", { id: stackId })
+                .execute();
+        } catch (error) {
+            console.error(error.message)
+            throw error
         } finally {
-            connection.close()
+            await connection.close()
         }
     }
 
-    async removeEnvelopeData(EnvelId) {
+    async removeEnvelopeData(envelopeId) {
         const connection = await this.connect()
         try {
-            await connection.query(
-                `DELETE FROM Envelopes WHERE id = ?`,
-                [EnvelId], error => {
-                    if (error)
-                        return console.error(error.message);
-                })
-
+            await connection
+                .createQueryBuilder()
+                .delete()
+                .from(Envelope)
+                .where("id=:id", { id: envelopeId })
+                .execute();
+        } catch (error) {
+            console.error(error.message)
+            throw error
         } finally {
-            connection.close()
+            await connection.close()
         }
     }
 
     async moveStackToEnvelope(StackId, EnvelopeID) {
         const connection = await this.connect()
         try {
-            await connection.query(
-                `UPDATE CorticalStacks SET idEnvelope = ? WHERE id = ? ;`,
-                [EnvelopeID, StackId], error => {
-                    if (error)
-                        return console.error(error.message);
-                })
-
+            await connection.createQueryBuilder()
+                .update(CorticalStack)
+                .set({ idEnvelope: EnvelopeID })
+                .where("id=:id", { id: StackId })
+                .execute();
+        } catch (error) {
+            console.error(error.message)
+            throw error
         } finally {
-            connection.close()
+            await connection.close()
         }
     }
 
     async moveEnvelopeToStack(EnvelopeID, StackId) {
         const connection = await this.connect()
         try {
-            await connection.query(
-                `UPDATE Envelopes SET idStack = ? WHERE id = ? ;`,
-                [StackId, EnvelopeID], error => {
-                    if (error)
-                        return console.error(error.message);
-                })
-
+            await connection.createQueryBuilder()
+                .update(Envelope)
+                .set({ idStack: StackId })
+                .where("id=:id", { id: EnvelopeID })
+                .execute();
+        } catch (error) {
+            console.error(error.message)
+            throw error
         } finally {
-            connection.close()
+            await connection.close()
         }
     }
 

@@ -6,33 +6,27 @@ class WeiClinic {
     constructor() {
     }
 
-   async create(realGender, name, age) {
+    async create(realGender, name, age) {
         const dal = new Dal()
-        try{
-        const newStack = new CorticalStack(null, realGender, name, age, null)
-        const newEnvelope = new Envelope(null, realGender, age, null)
+        try {
+            const newStack = new CorticalStack(null, realGender, name, age, null)
+            const newEnvelope = new Envelope(null, realGender, age, null)
 
-        newStack = await dal.saveStackData(newStack)
-        newEnvelope = await dal.saveEnvelopeData(newEnvelope)
+            newStack, newEnvelope = await dal.digitize(newEnvelope, newStack)
+            return {
+                corticalStack: newStack,
+                envelope: newEnvelope
+            }
 
-        newEnvelope.idStack = newStack.id
-        newStack.idEnvelope = newEnvelope.id
-
-        newStack = await dal.saveStackData(newStack)
-        newEnvelope = await dal.saveEnvelopeData(newEnvelope)
-
-        return {
-            corticalStack: newStack,
-            envelope: newEnvelope
+        } catch (err) {
+            console.error(err.message)
+            throw err
+        } finally {
+            await connection.close()
         }
-    }catch(err){
-        console.error(err.message)
-        throw err
-    }finally{
-        await connection.close()
-    }}
+    }
 
-   async assignStackToEnvelope(idStack, idEnvelope) {
+    async assignStackToEnvelope(idStack, idEnvelope) {
         const dal = new Dal()
         const stacks = await dal.getStackData()
         const stack = await stacks.find(sta => { return sta.id == idStack })
@@ -81,7 +75,7 @@ class WeiClinic {
 
         const envelope = await envelopes.find(env => { return env.id == stack.idEnvelope })
         //can't find envelope
-        if (!envelope) { 
+        if (!envelope) {
             throw "rm3"
         }
 
@@ -95,7 +89,7 @@ class WeiClinic {
     async killEnvelope(idEnvelope) {
         const dal = new Dal()
         const stacks = await dal.getStackData()
-        const envelopes =await  dal.getEnvelopeData()
+        const envelopes = await dal.getEnvelopeData()
 
         const envelope = await envelopes.find(env => env.id == idEnvelope)
         if (!envelope) { //not found
@@ -104,8 +98,8 @@ class WeiClinic {
 
         //If envelope got a Stack we remove it first
         if (envelope.idStack) {
-           stack = await stacks.find(sta => { return sta.id == envelope.idStack })
-           stack.idEnvelope = null
+            stack = await stacks.find(sta => { return sta.id == envelope.idStack })
+            stack.idEnvelope = null
         }
         await dal.saveStackData(stack)
         await dal.removeEnvelopeData(idEnvelope)
@@ -113,8 +107,8 @@ class WeiClinic {
 
     async destroyStack(idStack) {
         const dal = new Dal()
-        const stacks =await  dal.getStackData()
-     
+        const stacks = await dal.getStackData()
+
         const stack = await stacks.find(sta => { return sta.id == idStack })
         if (!stack) {
             throw "ds"
@@ -125,7 +119,7 @@ class WeiClinic {
         }
 
         await dal.removeStackData(idStack)
-        }
+    }
 }
 const weiClinic = new WeiClinic()
 
