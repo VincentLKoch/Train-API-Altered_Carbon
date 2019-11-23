@@ -1,5 +1,4 @@
 import { getClinic } from '../../weiClinic.js'
-import Dal from '../../dal'
 import CorticalStack from '../../corticalStack'
 import Envelope from '../../Envelope'
 
@@ -10,35 +9,39 @@ describe('removeStackFromEnvelope test', () => {
         weiClinic = getClinic()
     })
 
-    it('Test create', () => {
+    it('Test create', async () => {
+        const fakeStack = new CorticalStack(1, "M", "Toto", 8, 1)
+        const fakeEnvelope = new Envelope(1, 'M', 8, 1)
 
-        const fakeStack = new CorticalStack(1, "M", "Toto", 8,1)
-        const fakeEnvelope = new Envelope(1, 'M', 8,1)
-        Dal.saveStackData  = jest.fn().mockReturnValue(fakeStack);
-        Dal.saveEnvelopeData  = jest.fn().mockReturnValue(fakeEnvelope);
+        weiClinic.dal.digitize = jest.fn()
+            .mockReturnValue({
+                corticalStack: fakeStack,
+                envelope: fakeEnvelope
+            })
 
-        const created =  weiClinic.create("M", "Toto", 8)
+        const result = await weiClinic.create("M", "Toto", 8)
 
-        expect(Dal.saveEnvelopeData).toHaveBeenCalledTimes(2)
-        expect(Dal.saveStackData).toHaveBeenCalledTimes(2)
-        expect(created.envelope).toEqual([{ id: 1, gender: 'M', age: 8, idStack: 1 }])
-        expect(created.corticalStack).toEqual([{ id: 1, name: 'Toto', age: 8, idEnvelope: 1, realGender: 'M' }])
+        expect(weiClinic.dal.digitize).toHaveBeenCalledTimes(1)
+        expect(result.corticalStack).toEqual({ id: 1, name: 'Toto', age: 8, idEnvelope: 1, realGender: 'M' })
+        expect(result.envelope).toEqual({ id: 1, gender: 'M', age: 8, idStack: 1 })
     });
 
-    it('Test add second', () => {
-        
 
-        const fakeStack = new CorticalStack(2, "M", "Toto", 8,2)
-        const fakeEnvelope = new Envelope(2, 'M', 8,2)
-        Dal.saveStackData  = jest.fn().mockReturnValue(fakeStack);
-        Dal.saveEnvelopeData  = jest.fn().mockReturnValue(fakeEnvelope);
+    it('Test add second',async () => {
+        const fakeStack = new CorticalStack(2, "M", "Toto", 8, 2)
+        const fakeEnvelope = new Envelope(2, 'M', 8, 2)
 
-        const created =  weiClinic.create("M", "Toto", 8)
+        weiClinic.dal.digitize = jest.fn()
+            .mockReturnValue({
+                corticalStack: fakeStack,
+                envelope: fakeEnvelope
+            })
 
-        expect(Dal.saveEnvelopeData).toHaveBeenCalledTimes(2)
-        expect(Dal.saveStackData).toHaveBeenCalledTimes(2)
-        expect(created.envelope).toEqual([{ id: 2, gender: 'M', age: 8, idStack: 2 }])
-        expect(created.corticalStack).toEqual([{ id: 2, name: 'Toto', age: 8, idEnvelope: 2, realGender: 'M' }])
+        const result = await weiClinic.create("M", "Toto", 8)
+
+        expect(weiClinic.dal.digitize).toHaveBeenCalledTimes(1)
+        expect(result.envelope).toEqual({ id: 2, gender: 'M', age: 8, idStack: 2 })
+        expect(result.corticalStack).toEqual({ id: 2, name: 'Toto', age: 8, idEnvelope: 2, realGender: 'M' })
     });
 
 })

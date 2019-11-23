@@ -67,7 +67,10 @@ class Dal {
             //and update on SQL
             await dataRepositoryStacks.save(newStack)
 
-            return newStack, newEnvelope
+            return {
+                corticalStack: newStack,
+                envelope: newEnvelope
+            }
 
         } catch (err) {
             console.error(err.message)
