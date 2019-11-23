@@ -1,6 +1,4 @@
 import { getClinic } from '../../weiClinic.js'
-import CorticalStack from '../../corticalStack'
-import Envelope from '../../Envelope'
 
 describe('removeStackFromEnvelope test', () => {
     let weiClinic
@@ -10,8 +8,8 @@ describe('removeStackFromEnvelope test', () => {
     })
 
     it('Test create', async () => {
-        const fakeStack = new CorticalStack(1, "M", "Toto", 8, 1)
-        const fakeEnvelope = new Envelope(1, 'M', 8, 1)
+        const fakeStack = { id: 1, idEnvelope: 1 }
+        const fakeEnvelope = { id: 1, idStack: 1 }
 
         weiClinic.dal.digitize = jest.fn()
             .mockReturnValue({
@@ -22,14 +20,14 @@ describe('removeStackFromEnvelope test', () => {
         const result = await weiClinic.create("M", "Toto", 8)
 
         expect(weiClinic.dal.digitize).toHaveBeenCalledTimes(1)
-        expect(result.corticalStack).toEqual({ id: 1, name: 'Toto', age: 8, idEnvelope: 1, realGender: 'M' })
-        expect(result.envelope).toEqual({ id: 1, gender: 'M', age: 8, idStack: 1 })
+        expect(result.corticalStack).toEqual({ id: 1, idEnvelope: 1 })
+        expect(result.envelope).toEqual({ id: 1, idStack: 1 })
     });
 
 
-    it('Test add second',async () => {
-        const fakeStack = new CorticalStack(2, "M", "Toto", 8, 2)
-        const fakeEnvelope = new Envelope(2, 'M', 8, 2)
+    it('Test add second', async () => {
+        const fakeStack = { id: 2, idEnvelope: 2 }
+        const fakeEnvelope = { id: 2, idStack: 2 }
 
         weiClinic.dal.digitize = jest.fn()
             .mockReturnValue({
@@ -40,8 +38,8 @@ describe('removeStackFromEnvelope test', () => {
         const result = await weiClinic.create("M", "Toto", 8)
 
         expect(weiClinic.dal.digitize).toHaveBeenCalledTimes(1)
-        expect(result.envelope).toEqual({ id: 2, gender: 'M', age: 8, idStack: 2 })
-        expect(result.corticalStack).toEqual({ id: 2, name: 'Toto', age: 8, idEnvelope: 2, realGender: 'M' })
+        expect(result.corticalStack).toEqual({ id: 2, idEnvelope: 2 })
+        expect(result.envelope).toEqual({ id: 2, idStack: 2 })
     });
 
 })
