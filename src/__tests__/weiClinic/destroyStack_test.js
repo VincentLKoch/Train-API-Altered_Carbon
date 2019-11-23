@@ -1,4 +1,8 @@
 import { getClinic } from '../../weiClinic.js'
+import CorticalStack from '../../corticalStack.js'
+import Dal from '../../dal.js'
+import CorticalStack from '../../corticalStack'
+import Envelope from '../../Envelope'
 
 
 describe('Destroy Stack test', () => {
@@ -10,27 +14,39 @@ describe('Destroy Stack test', () => {
     })
 
     it('The stack is destroyed', () => {
-        weiClinic.stacks = [{ id: 1, idEnvelope: null }]
+        const fakeStackMethods = {find(){return new CorticalStack(1,"M", "Toto", 8, null)}}
+        Dal.getStackData  = jest.fn().mockReturnValue(fakeStackMethods);
+
+        Dal.removeStackData  = jest.fn()
 
         weiClinic.destroyStack(1)
 
-        expect(weiClinic.envelopes[1]).toBeUndefined()
+        expect(Dal.getStackData).toHaveBeenCalledTimes(1)
+        expect(Dal.removeStackData).toHaveBeenCalledTimes(1)
+
     });
 
     it('The stack and the envelope are destroyed', () => {
-        weiClinic.envelopes = [{ id: 1, idStack: 1 }]
-        weiClinic.stacks = [{ id: 1, idEnvelope: 1 }]
+        const fakeStackMethods = {find(){return new CorticalStack(1,"M", "Toto", 8, 1)}}
+        Dal.getStackData  = jest.fn().mockReturnValue(fakeStackMethods);
+
+        Dal.removeStackData  = jest.fn()
+        Dal.removeEnvelopeData = jest.fn()
 
         weiClinic.destroyStack(1)
 
-        expect(weiClinic.stacks).toEqual([])
-        expect(weiClinic.envelopes).toEqual([])
+        expect(Dal.getStackData).toHaveBeenCalledTimes(1)
+        expect(Dal.removeStackData).toHaveBeenCalledTimes(1)
+        expect(Dal.removeEnvelopeData).toHaveBeenCalledTimes(1)
+        
     });
 
-    it('The stack is not finded', () => {
-        weiClinic.stacks = []
+    it('The stack is not found', () => {
+        const fakeStackMethods = {find(){return null}}
+        Dal.getStackData  = jest.fn().mockReturnValue(fakeStackMethods);
 
         expect(() => { weiClinic.destroyStack(3) }).toThrow("ds")
+        expect(Dal.getStackData).toHaveBeenCalledTimes(1)
     });
 
 })
