@@ -1,5 +1,7 @@
 import { createConnection } from 'typeorm'
 import { corticalStackSchema, envelopeSchema } from './Schemas'
+import CorticalStack from './corticalStack'
+import Envelope from './Envelope'
 
 class Dal {
     async connect() {
