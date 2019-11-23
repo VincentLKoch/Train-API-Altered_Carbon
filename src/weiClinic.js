@@ -214,7 +214,7 @@ class WeiClinic {
 
     async destroyStack(idStack) {
         const stacks = this.getStackData()
-     ]
+     
         const stack = await stacks.find(sta => { return sta.id == idStack })
         if (!stack) {
             throw "ds"
