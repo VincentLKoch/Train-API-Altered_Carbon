@@ -20,33 +20,34 @@ class WeiClinic {
 
     async assignStackToEnvelope(idStack, idEnvelope) {
         try {
-            const stacks = await this.dal.getStackData()
-            const stack = await stacks.find(sta => { return sta.id == idStack })
-
+            const stack = await this.dal.getStackById(idStack)
+            //if no stack found
             if (!stack) {
                 throw "ad1" //400
             }
 
+            //stack already in an envelope
             if (!(stack.idEnvelope === null)) { throw "ad2" }
 
-            const envelopes = await this.dal.getEnvelopeData()
             let envelope
 
             if (idEnvelope) {
-                envelope = await envelopes.find(env => { return env.id == idEnvelope })
-                if (!envelope) { throw "ad3" } //400
-                if (!(envelope.idStack === null)) { throw "ad4" } //envelope already have a stack, error 400
+                envelope = await this.dal.getEnvelopeById(idEnvelope)
 
-            } else {
-                envelope = await envelopes.findOne(env => { return env.idStack === null })
+                //can't find envelope stack is in
+                if (!envelope) { throw "ad3" } //400
+                //envelope is empty
+                if (!(envelope.idStack === null)) { throw "ad4" }
+
+            } else { //default (no envelope given)
+                // find first empty envelope
+                const envelope = this.dal.getFirstEmptyEnvelope()
+                //no empty envelope
                 if (!envelope) { throw "ad5" } //404
             }
 
-            envelope.idStack = stack.id
-            stack.idEnvelope = envelope.id
-
-            await this.dal.saveStackData(stack)
-            await this.dal.saveEnvelopeData(envelope)
+            await this.dal.moveEnvelopeToStack(envelope.id, idStack)
+            await this.dal.moveStackToEnvelope(idStack, envelope.id)
 
         } catch (error) {
             throw error

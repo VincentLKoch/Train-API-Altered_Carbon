@@ -187,6 +187,23 @@ class Dal {
         }
     }
 
+    async getFirstEmptyEnvelope() {
+        let connection
+        try {
+            connection = await this.connect()
+            return await connection.getRepository(Envelope)
+                .createQueryBuilder("envelope")
+                .where("envelope.idStack IS NULL")
+                .getOne();
+        } catch (err) {
+            console.error(err.message)
+            throw err
+        } finally {
+            await connection.close()
+        }
+    }
+
+
 }//end DAL
 
 export default Dal

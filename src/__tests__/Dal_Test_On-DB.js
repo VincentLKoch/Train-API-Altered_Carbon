@@ -33,6 +33,14 @@ describe('DAL test', () => {
         }
     });
 
+    it('Test getting empty Envelope', async () => {
+        try {
+            await dal.getFirstEmptyEnvelope()
+        } catch (error) {
+            expect(error).toBeNull()
+        }
+    })
+
     it('Test in DB', async () => {
         let stack = { id: null, realGender: 'M', name: 'Toto', age: '23', idEnvelope: null }
         let envelope = { id: null, gender: 'M', age: '23', idStack: null }
@@ -86,4 +94,5 @@ describe('DAL test', () => {
         }
 
     })
+
 })
