@@ -8,7 +8,6 @@ class WeiClinic {
     }
 
     async create(realGender, name, age) {
-
         try {
             return await this.dal.digitize(
                 new Envelope(null, realGender, age, null),
@@ -80,22 +79,19 @@ class WeiClinic {
     }
 
     async killEnvelope(idEnvelope) {
+        try {
+            const envelopeList = await this.dal.getEnvelopeData()
 
-        const stacks = await this.dal.getStackData()
-        const envelopes = await this.dal.getEnvelopeData()
+            const envelope = await envelopeList.find(env => env.id == idEnvelope)
+            if (!envelope) { //not found
+                throw "kil"
+            }
 
-        const envelope = await envelopes.find(env => env.id == idEnvelope)
-        if (!envelope) { //not found
-            throw "kil"
+            await this.dal.moveStackToEnvelope(envelope.idStack, null)
+            await this.dal.removeEnvelopeData(idEnvelope)
+        } catch (error) {
+            throw error
         }
-
-        //If envelope got a Stack we remove it first
-        if (envelope.idStack) {
-            stack = await stacks.find(sta => { return sta.id == envelope.idStack })
-            stack.idEnvelope = null
-        }
-        await this.dal.saveStackData(stack)
-        await this.dal.removeEnvelopeData(idEnvelope)
     }
 
     async destroyStack(idStack) {
