@@ -1,9 +1,4 @@
 import { getClinic } from '../../weiClinic.js'
-import CorticalStack from '../../corticalStack.js'
-import Dal from '../../dal.js'
-import CorticalStack from '../../corticalStack'
-import Envelope from '../../Envelope'
-
 
 describe('Destroy Stack test', () => {
     let weiClinic
