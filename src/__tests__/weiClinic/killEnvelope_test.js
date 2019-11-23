@@ -9,43 +9,51 @@ describe('Kill test', () => {
     })
 
     it('The enveloppe is killed', async () => {
-        weiClinic.dal.getEnvelopeById = jest.fn()
-            .mockReturnValue({ id: 1, idStack: null });
-        weiClinic.dal.moveStackToEnvelope = jest.fn()
-        weiClinic.dal.removeEnvelopeData = jest.fn()
+        try {
+            weiClinic.dal.getEnvelopeById = jest.fn()
+                .mockReturnValue({ id: 1, idStack: null });
+            weiClinic.dal.moveStackToEnvelope = jest.fn()
+            weiClinic.dal.removeEnvelopeData = jest.fn()
 
-        await weiClinic.killEnvelope(1)
+            await weiClinic.killEnvelope(1)
 
-        expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
-        expect(weiClinic.dal.moveStackToEnvelope).toHaveBeenCalledWith(null, null)
-        expect(weiClinic.dal.removeEnvelopeData).toHaveBeenCalledWith(1)
-
+            expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
+            expect(weiClinic.dal.moveStackToEnvelope).toHaveBeenCalledTimes(0) //0 since idStack = null
+            expect(weiClinic.dal.removeEnvelopeData).toHaveBeenCalledWith(1)
+        } catch (error) {
+            expect(error).toBeNull()
+        }
 
     });
 
 
-        it('The enveloppe is killed and we keep the stack', async () => {
+    it('The enveloppe is killed and we keep the stack', async () => {
+        try {
             weiClinic.dal.getEnvelopeById = jest.fn()
-            .mockReturnValue({ id: 1, idStack: 1 });
+                .mockReturnValue({ id: 1, idStack: 1 });
             weiClinic.dal.moveStackToEnvelope = jest.fn()
             weiClinic.dal.removeEnvelopeData = jest.fn()
-            
-    
-            await weiClinic.killEnvelope(1)
-    
-            expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
-            expect(weiClinic.dal.moveStackToEnvelope).toHaveBeenCalledWith(1, null)
-            expect(weiClinic.dal.removeEnvelopeData).toHaveBeenCalledWith(1)
-    
-    
-        });
-    
-        it('The enveloppe is not finded', async () => {
-            weiClinic.dal.getEnvelopeById = jest.fn()
-            .mockReturnValue(null);
-    
-            expect(() => { await weiClinic.killEnvelope(3) }).toThrow("kil")
-        });
 
+
+            await weiClinic.killEnvelope(1)
+
+            expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
+            expect(weiClinic.dal.moveStackToEnvelope).toHaveBeenCalledWith(1, null) // called with stackId, null (removing stack)
+            expect(weiClinic.dal.removeEnvelopeData).toHaveBeenCalledWith(1)
+
+        } catch (error) {
+            expect(error).toBeNull()
+        }
+    });
+
+    it('The enveloppe is not finded', async () => {
+        try {
+            weiClinic.dal.getEnvelopeById = jest.fn().mockReturnValue(null);
+            weiClinic.killEnvelope(3)
+        } catch (error) {
+            //expect the catching of envelope not found
+            expect(error).toBeNull("kil")
+        }
+    });
 
 })
