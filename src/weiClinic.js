@@ -1,8 +1,6 @@
-import Dal from './typeOrmDal'
+import Dal from './dal'
 import CorticalStack from './corticalStack'
 import Envelope from './Envelope'
-import mysql from 'mysql2/promise'
-import {corticalStackSchema, envelopeSchema} from './Schemas'
 
 class WeiClinic {
     constructor() {
