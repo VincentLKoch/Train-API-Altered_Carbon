@@ -52,7 +52,7 @@ describe('Kill test', () => {
             weiClinic.killEnvelope(3)
         } catch (error) {
             //expect the catching of envelope not found
-            expect(error).toBeNull("kil")
+            expect(error).toBe("kil")
         }
     });
 

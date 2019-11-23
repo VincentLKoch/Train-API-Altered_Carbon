@@ -21,6 +21,8 @@ class Dal {
         }
     }
 
+    //Only use in some tests
+    //may be usefull if we want to for exmple listing all stacks/envelope if the project is continue
     async getStackData() {
         let connection
         try {
