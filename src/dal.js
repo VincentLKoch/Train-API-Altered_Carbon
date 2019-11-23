@@ -22,10 +22,12 @@ class Dal {
     }
 
     async getStackData() {
-        const connection = await this.connect()
+        let connection
         try {
-            const dataRepositoryStacks = connection.getRepository(CorticalStack)
-            return await dataRepositoryStacks.find()
+            connection = await this.connect()
+            return await connection.getRepository(CorticalStack)
+                .createQueryBuilder("stack")
+                .getMany();
         } catch (err) {
             console.error(err.message)
             throw err
@@ -35,10 +37,12 @@ class Dal {
     }
 
     async getEnvelopeData() {
-        const connection = await this.connect()
+        let connection
         try {
-            const dataRepositoryEnvelopes = connection.getRepository(Envelope)
-            return await dataRepositoryEnvelopes.find()
+            connection = await this.connect()
+            return await connection.getRepository(Envelope)
+                .createQueryBuilder("envelope")
+                .getMany();
         } catch (err) {
             console.error(err.message)
             throw err
@@ -48,8 +52,9 @@ class Dal {
     }
 
     async getStackById(stackId) {
-        const connection = await this.connect()
+        let connection
         try {
+            connection = await this.connect()
             return await connection.getRepository(corticalStack)
                 .createQueryBuilder("stack")
                 .where("stack.id = :id", { id: stackId })
@@ -63,8 +68,9 @@ class Dal {
     }
 
     async getEnvelopeById(envelopeId) {
-        const connection = await this.connect()
+        let connection
         try {
+            connection = await this.connect()
             return await connection.getRepository(Envelope)
                 .createQueryBuilder("envelope")
                 .where("envelope.id = :id", { id: envelopeId })
@@ -77,10 +83,10 @@ class Dal {
         }
     }
 
-
     async digitize(newStack, newEnvelope) {
-        const connection = await this.connect()
+        let connection
         try {
+            connection = await this.connect()
             //First get Repository
             const dataRepositoryStacks = connection.getRepository(CorticalStack)
             const dataRepositoryEnvelopes = connection.getRepository(Envelope)
@@ -112,8 +118,9 @@ class Dal {
     }
 
     async removeStackData(stackId) {
-        const connection = await this.connect()
+        let connection
         try {
+            connection = await this.connect()
             await connection
                 .createQueryBuilder()
                 .delete()
@@ -129,8 +136,9 @@ class Dal {
     }
 
     async removeEnvelopeData(envelopeId) {
-        const connection = await this.connect()
+        let connection
         try {
+            connection = await this.connect()
             await connection
                 .createQueryBuilder()
                 .delete()
@@ -146,8 +154,9 @@ class Dal {
     }
 
     async moveStackToEnvelope(StackId, EnvelopeID) {
-        const connection = await this.connect()
+        let connection
         try {
+            connection = await this.connect()
             await connection.createQueryBuilder()
                 .update(CorticalStack)
                 .set({ idEnvelope: EnvelopeID })
@@ -162,8 +171,9 @@ class Dal {
     }
 
     async moveEnvelopeToStack(EnvelopeID, StackId) {
-        const connection = await this.connect()
+        let connection
         try {
+            connection = await this.connect()
             await connection.createQueryBuilder()
                 .update(Envelope)
                 .set({ idStack: StackId })
