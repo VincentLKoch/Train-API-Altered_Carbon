@@ -14,7 +14,7 @@ describe('assignStackToEnvelope test', () => {
     })
 
     it('Test Working', async () => {
-        weiClinic.dal.getStackById = jest.fn()
+       try{ weiClinic.dal.getStackById = jest.fn()
             .mockReturnValue({ id: 1, idEnvelope: null });
         weiClinic.dal.moveStackToEnvelope = jest.fn()
         weiClinic.dal.moveEnvelopeToStack = jest.fn()
@@ -27,53 +27,72 @@ describe('assignStackToEnvelope test', () => {
         expect(weiClinic.dal.moveStackToEnvelope).toHaveBeenCalledWith(1, 2)
         expect(weiClinic.dal.moveEnvelopeToStack).toHaveBeenCalledWith(2,1)
         expect(weiClinic.dal.getFirstEmptyEnvelope).toBeCalledTimes(1)
+       } catch(error){
+           expect(error).toBeNull()
+        }
+   
     });
 
     it('Stack not found', async () => {
+       try{ 
         weiClinic.dal.getStackById = jest.fn()
         .mockReturnValue(null);
-
-        expect(() => { await weiClinic.assignStackToEnvelope(1) }).toThrow("ad1")
-        expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
+        await weiClinic.assignStackToEnvelope(1) 
+        
+       } catch(error){
+           expect(error).toBe("ad1") 
+       }
+       expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
     });
 
     it('Stack already inside a envelope', async () => {
-        weiClinic.dal.getStackById = jest.fn()
+        try{weiClinic.dal.getStackById = jest.fn()
         .mockReturnValue({ id: 1, idEnvelope: 1 });
 
-        expect(() => { await weiClinic.assignStackToEnvelope(1) }).toThrow("ad2")
+        await weiClinic.assignStackToEnvelope(1)
+        } catch(error){
+            expect(error).toBe("ad2")
+        }
         expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
     });
 
     it("Can't find given envelope", async () => {
+        try{
         weiClinic.dal.getStackById = jest.fn()
         .mockReturnValue({ id: 1, idEnvelope: null });
         weiClinic.dal.getEnvelopeById = jest.fn()
         .mockReturnValue(null);
+        await weiClinic.assignStackToEnvelope(1, 1)
+        } catch(error){
+            expect(error).toBe("ad3")}
 
-        expect(() => { await weiClinic.assignStackToEnvelope(1, 1) }).toThrow("ad3")
         expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
         expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
     });
 
     it('Given envelope is used', async () => {
+        try{
         weiClinic.dal.getStackById = jest.fn()
         .mockReturnValue({ id: 1, idEnvelope: null });
         weiClinic.dal.getEnvelopeById = jest.fn()
         .mockReturnValue({ id: 1, idStack: 2 });
 
-        expect(() => { await weiClinic.assignStackToEnvelope(1, 1) }).toThrow("ad4")
+        await weiClinic.assignStackToEnvelope(1, 1)
+        }catch (error){
+            expect(error).toBe("ad4")}
         expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
         expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
     });
 
     it('No envelope empty1', async () => {
+        try{
         weiClinic.dal.getStackById = jest.fn()
         .mockReturnValue({ id: 1, idEnvelope: null });
         weiClinic.dal.getFirstEmptyEnvelope = jest.fn()
         .mockReturnValue(null);
-
-        expect(() => { await weiClinic.assignStackToEnvelope(1) }).toThrow("ad5")
+        await weiClinic.assignStackToEnvelope(1) 
+        } catch (error){
+            expect(error).toBe("ad5")}
         expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
         expect(weiClinic.dal.getFirstEmptyEnvelope).toHaveBeenCalledTimes(1)
     });
