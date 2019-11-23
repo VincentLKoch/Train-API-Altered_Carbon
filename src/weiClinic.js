@@ -135,10 +135,10 @@ class WeiClinic {
         await connection.close()
     }}
 
-    assignStackToEnvelope(idStack, idEnvelope) {
+   async assignStackToEnvelope(idStack, idEnvelope) {
 
         const stacks = this.getStackData()
-        const stack = stacks.find(sta => { return sta.id == idStack })
+        const stack = await stacks.find(sta => { return sta.id == idStack })
 
         if (!stack) {
             throw "ad1" //400
@@ -150,12 +150,12 @@ class WeiClinic {
         let envelope
 
         if (idEnvelope) {
-            envelope = envelopes.find(env => { return env.id == idEnvelope })
+            envelope = await envelopes.find(env => { return env.id == idEnvelope })
             if (!envelope) { throw "ad3" } //400
             if (!(envelope.idStack === null)) { throw "ad4" } //envelope already have a stack, error 400
 
         } else {
-            envelope = envelopes.findOne(env => { return env.idStack === null })
+            envelope = await envelopes.findOne(env => { return env.idStack === null })
             if (!envelope) { throw "ad5" } //404
         }
 
@@ -167,11 +167,11 @@ class WeiClinic {
 
     }
 
-    removeStackFromEnvelope(idStack) {
+    async removeStackFromEnvelope(idStack) {
         const stacks = this.getStackData()
         const envelopes = this.getEnvelopeData()
 
-        const stack = stacks.find(sta => { return sta.id == idStack })
+        const stack = await stacks.find(sta => { return sta.id == idStack })
         if (!stack) { //stack not found
             throw "rm1"
         }
@@ -181,7 +181,7 @@ class WeiClinic {
             throw "rm2"
         }
 
-        const envelope = envelopes.find(env => { return env.id == stack.idEnvelope })
+        const envelope = await envelopes.find(env => { return env.id == stack.idEnvelope })
         //can't find envelope
         if (!envelope) { 
             throw "rm3"
@@ -194,28 +194,28 @@ class WeiClinic {
         this.saveEnvelopeData(envelope)
     }
 
-    killEnvelope(idEnvelope) {
+    async killEnvelope(idEnvelope) {
         const stacks = this.getStackData()
         const envelopes = this.getEnvelopeData()
 
-        const envelope = envelopes.find(env => env.id == idEnvelope)
+        const envelope = await envelopes.find(env => env.id == idEnvelope)
         if (!envelope) { //not found
             throw "kil"
         }
 
         //If envelope got a Stack we remove it first
         if (envelope.idStack) {
-           stack = stacks.find(sta => { return sta.id == envelope.idStack })
+           stack = await stacks.find(sta => { return sta.id == envelope.idStack })
            stack.idEnvelope = null
         }
         this.saveStackData(stack)
         this.removeEnvelopeData(idEnvelope)
     }
 
-    destroyStack(idStack) {
+    async destroyStack(idStack) {
         const stacks = this.getStackData()
      ]
-        const stack = stacks.find(sta => { return sta.id == idStack })
+        const stack = await stacks.find(sta => { return sta.id == idStack })
         if (!stack) {
             throw "ds"
         }
