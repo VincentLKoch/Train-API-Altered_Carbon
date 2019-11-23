@@ -2,11 +2,13 @@ import { createConnection } from 'typeorm'
 import { corticalStackSchema, envelopeSchema } from './Schemas'
 import CorticalStack from './corticalStack'
 import Envelope from './Envelope'
+import mysql from 'mysql2/promise'
+
 
 class Dal {
     async connect() {
         try {
-            return await createConnection({
+            return await mysql.createConnection({
                 type: 'mysql',
                 host: '0.0.0.0',
                 port: 3306,
