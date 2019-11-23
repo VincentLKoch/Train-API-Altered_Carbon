@@ -38,6 +38,7 @@ describe('DAL test', () => {
         let envelope = { id: null, gender: 'M', age: '23', idStack: null }
         let stacks
         let envelopes
+        let digitizeResult
 
         //Test getting data
         try {
@@ -49,7 +50,7 @@ describe('DAL test', () => {
 
         //Test Adding
         try {
-            stack, envelope = await dal.digitize(stack, envelope)
+            digitizeResult = await dal.digitize(stack, envelope)
         } catch (error) {
             expect(error).toBeNull()
         }
@@ -57,12 +58,12 @@ describe('DAL test', () => {
         //Test Changing pointer
         try {
             //Changing
-            await dal.moveStackToEnvelope(stack.id, 2005)
-            await dal.moveEnvelopeToStack(envelope.id, 2500)
+            await dal.moveStackToEnvelope(digitizeResult.corticalStack.id, 2005)
+            await dal.moveEnvelopeToStack(digitizeResult.envelope.id, 2500)
             //Testing
             const tempStacks = await dal.getStackData()
-            expect(tempStacks[tempStacks.length - 1].idEnvelope).toBe(2005)
             const tempEnvelopes = await dal.getEnvelopeData()
+            expect(tempStacks[tempStacks.length - 1].idEnvelope).toBe(2005)
             expect(tempEnvelopes[tempEnvelopes.length - 1].idStack).toBe(2500)
         } catch (error) {
             expect(error).toBeNull()
@@ -70,8 +71,8 @@ describe('DAL test', () => {
 
         //Test remove test data
         try {
-            await dal.removeStackData(stack.id)
-            await dal.removeEnvelopeData(envelope.id)
+            await dal.removeStackData(digitizeResult.corticalStack.id)
+            await dal.removeEnvelopeData(digitizeResult.envelope.id)
         } catch (error) {
             expect(error).toBeNull()
         }
