@@ -1,4 +1,4 @@
-import { getNewId } from './idHelper'
+import Dal from './typeOrmDal'
 import CorticalStack from './corticalStack'
 import Envelope from './Envelope'
 import mysql from 'mysql2/promise'
@@ -8,121 +8,21 @@ class WeiClinic {
     constructor() {
     }
 
-    async connect(){
-        try{
-            return await mysql.createConnection({
-                type: 'mysql',
-                host: '0.0.0.0',
-                port: 3306,
-                user: root,
-                password: root,
-                database: db_alteredCarbon,
-                entities: [corticalStackSchema, envelopeSchema]
-            })
-        }catch(err){
-            console.error('Unable to connect')
-            throw err
-        }
-    }
-
-    async getStackData(){
-        const connection = await this.connect()
-        try{
-            const dataRepositoryStacks = connection.getRepository(CorticalStack)
-            return await dataRepositoryStacks.find()
-        }catch(err){
-            console.error(err.message)
-        }finally{
-            connection.close()
-        }
-    }   
-    
-    async getEnvelopeData(){
-        const connection = await this.connect()
-        try{
-            const dataRepositoryEnvelopes = connection.getRepository(Envelope)
-            return await dataRepositoryEnvelopes.find()
-        }catch(err){
-            console.error(err.message)
-        }finally{
-            connection.close()
-        }
-    }   
-
-    async saveStackData(Sta){
-        const connection = await this.connect()
-        try{
-            const dataRepositoryStacks = connection.getRepository(CorticalStack)
-            await dataRepositoryStacks.save(Sta)
-        }catch(err){
-            console.error(err.message)
-        }finally{
-            connection.close()
-        }
-    }  
-
-    async saveEnvelopeData(Envel){
-        const connection = await this.connect()
-        try{
-            const dataRepositoryEnvelopes = connection.getRepository(Envelope)
-            await dataRepositoryEnvelopes.save(Envel)
-        }catch(err){
-            console.error(err.message)
-        }finally{
-            connection.close()
-        }
-    } 
-
-    async removeStackData(StaId){
-        const connection = await this.connect()
-        try{
-            let sql = `DELETE FROM CorticalStacks WHERE id = ?`;
- 
-             // delete a row with id 1
-            await connection.query(sql, StaId, error => {
-            if (error)
-             return console.error(error.message);
-             })
-
-        }finally{
-            connection.close()
-        }
-    }  
-
-    async removeEnvelopeData(EnvelId){
-        const connection = await this.connect()
-        try{
-            let sql = `DELETE FROM Envelopes WHERE id = ?`;
- 
-             // delete a row with id 1
-            await connection.query(sql, EnvelId, error => {
-            if (error)
-             return console.error(error.message);
-             })
-
-        }finally{
-            connection.close()
-        }
-    } 
 
    async create(realGender, name, age) {
-        const connection = await this.connect()
-
+        const dal = new Dal()
         try{
-        const dataRepositoryStacks = connection.getRepository(CorticalStack)
-        const dataRepositoryEnvelopes = connection.getRepository(Envelope)
-
         const newStack = new CorticalStack(null, realGender, name, age, null)
         const newEnvelope = new Envelope(null, realGender, age, null)
 
-        await dataRepositoryStacks.save(newStack)
-        await dataRepositoryStacks.save(newEnvelope)
+        await dal.saveStackData(newStack)
+        await dal.saveEnvelopeData(newEnvelope)
 
         newEnvelope.idStack = newStack.id
         newStack.idEnvelope = newEnvelope.id
 
-        await dataRepositoryStacks.save(newStack)
-        await dataRepositoryEnvelopes.save(newEnvelope)
+        await dal.saveStackData(newStack)
+        await dal.saveEnvelopeData(newEnvelope)
 
         return {
             corticalStack: newStack,
@@ -136,8 +36,8 @@ class WeiClinic {
     }}
 
    async assignStackToEnvelope(idStack, idEnvelope) {
-
-        const stacks = this.getStackData()
+        const dal = new Dal()
+        const stacks = await dal.getStackData()
         const stack = await stacks.find(sta => { return sta.id == idStack })
 
         if (!stack) {
@@ -146,7 +46,7 @@ class WeiClinic {
 
         if (!(stack.idEnvelope === null)) { throw "ad2" }
 
-        const envelopes = this.getEnvelopeData()
+        const envelopes = await dal.getEnvelopeData()
         let envelope
 
         if (idEnvelope) {
@@ -162,14 +62,15 @@ class WeiClinic {
         envelope.idStack = stack.id
         stack.idEnvelope = envelope.id
 
-        this.saveStackData(stack)
-        this.saveEnvelopeData(envelope)
+        await dal.saveStackData(stack)
+        await dal.saveEnvelopeData(envelope)
 
     }
 
     async removeStackFromEnvelope(idStack) {
-        const stacks = this.getStackData()
-        const envelopes = this.getEnvelopeData()
+        const dal = new Dal()
+        const stacks = await dal.getStackData()
+        const envelopes = await dal.getEnvelopeData()
 
         const stack = await stacks.find(sta => { return sta.id == idStack })
         if (!stack) { //stack not found
@@ -190,13 +91,14 @@ class WeiClinic {
         envelope.idStack = null
         stack.idEnvelope = null
 
-        this.saveStackData(stack)
-        this.saveEnvelopeData(envelope)
+        await dal.saveStackData(stack)
+        await dal.saveEnvelopeData(envelope)
     }
 
     async killEnvelope(idEnvelope) {
-        const stacks = this.getStackData()
-        const envelopes = this.getEnvelopeData()
+        const dal = new Dal()
+        const stacks = await dal.getStackData()
+        const envelopes =await  dal.getEnvelopeData()
 
         const envelope = await envelopes.find(env => env.id == idEnvelope)
         if (!envelope) { //not found
@@ -208,12 +110,13 @@ class WeiClinic {
            stack = await stacks.find(sta => { return sta.id == envelope.idStack })
            stack.idEnvelope = null
         }
-        this.saveStackData(stack)
-        this.removeEnvelopeData(idEnvelope)
+        await dal.saveStackData(stack)
+        await dal.removeEnvelopeData(idEnvelope)
     }
 
     async destroyStack(idStack) {
-        const stacks = this.getStackData()
+        const dal = new Dal()
+        const stacks =await  dal.getStackData()
      
         const stack = await stacks.find(sta => { return sta.id == idStack })
         if (!stack) {
@@ -221,10 +124,10 @@ class WeiClinic {
         }
         //if stack is in a envelope the envelope is erase too
         if (stack.idEnvelope) {
-            this.removeEnvelopeData(stack.idEnvelope)
+            await dal.removeEnvelopeData(stack.idEnvelope)
         }
 
-        this.removeStackData(idStack)
+        await dal.removeStackData(idStack)
         }
 }
 const weiClinic = new WeiClinic()
