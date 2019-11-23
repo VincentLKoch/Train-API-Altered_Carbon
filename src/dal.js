@@ -47,6 +47,37 @@ class Dal {
         }
     }
 
+    async getStackById(stackId) {
+        const connection = await this.connect()
+        try {
+            return await connection.getRepository(corticalStack)
+                .createQueryBuilder("stack")
+                .where("stack.id = :id", { id: stackId })
+                .getOne();
+        } catch (err) {
+            console.error(err.message)
+            throw err
+        } finally {
+            await connection.close()
+        }
+    }
+
+    async getEnvelopeById(envelopeId) {
+        const connection = await this.connect()
+        try {
+            return await connection.getRepository(Envelope)
+                .createQueryBuilder("envelope")
+                .where("envelope.id = :id", { id: envelopeId })
+                .getOne();
+        } catch (err) {
+            console.error(err.message)
+            throw err
+        } finally {
+            await connection.close()
+        }
+    }
+
+
     async digitize(newStack, newEnvelope) {
         const connection = await this.connect()
         try {

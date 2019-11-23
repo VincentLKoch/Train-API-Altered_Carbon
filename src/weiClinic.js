@@ -19,7 +19,6 @@ class WeiClinic {
     }
 
     async assignStackToEnvelope(idStack, idEnvelope) {
-
         const stacks = await this.dal.getStackData()
         const stack = await stacks.find(sta => { return sta.id == idStack })
 
@@ -80,13 +79,10 @@ class WeiClinic {
 
     async killEnvelope(idEnvelope) {
         try {
-            const envelopeList = await this.dal.getEnvelopeData()
-
-            const envelope = await envelopeList.find(env => env.id == idEnvelope)
+            const envelope = await this.dal.getEnvelopeById(idEnvelope)
             if (!envelope) { //not found
                 throw "kil"
             }
-
             await this.dal.moveStackToEnvelope(envelope.idStack, null)
             await this.dal.removeEnvelopeData(idEnvelope)
         } catch (error) {

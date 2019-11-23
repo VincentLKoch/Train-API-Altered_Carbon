@@ -9,14 +9,14 @@ describe('Kill test', () => {
     })
 
     it('The enveloppe is killed', async () => {
-        weiClinic.dal.getEnvelopeData = jest.fn()
-            .mockReturnValue([{ id: 1, idStack: null }]);
+        weiClinic.dal.getEnvelopeById = jest.fn()
+            .mockReturnValue({ id: 1, idStack: null });
         weiClinic.dal.moveStackToEnvelope = jest.fn()
         weiClinic.dal.removeEnvelopeData = jest.fn()
 
         await weiClinic.killEnvelope(1)
 
-        expect(weiClinic.dal.getEnvelopeData).toHaveBeenCalled()
+        expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
         expect(weiClinic.dal.moveStackToEnvelope).toHaveBeenCalledWith(null, null)
         expect(weiClinic.dal.removeEnvelopeData).toHaveBeenCalledWith(1)
 
