@@ -9,35 +9,48 @@ describe('Destroy Stack test', () => {
     })
 
     it('The stack is destroyed', async () => {
-        weiClinic.dal.getStackById = jest.fn()
-            .mockReturnValue({ id: 1, idEnvelope: null });
-        weiClinic.dal.removeStackData = jest.fn()
+        try {
 
-        await weiClinic.destroyStack(1)
+            weiClinic.dal.getStackById = jest.fn()
+                .mockReturnValue({ id: 1, idEnvelope: null });
+            weiClinic.dal.removeStackData = jest.fn()
 
-        expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
-        expect(weiClinic.dal.removeStackData).toHaveBeenCalledWith(1)
+            await weiClinic.destroyStack(1)
+
+            expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
+            expect(weiClinic.dal.removeStackData).toHaveBeenCalledWith(1)
+
+        } catch (error) {
+            expect(error).toBeNull()
+        }
 
     });
 
-    it('The stack and the envelope are destroyed',async () => {
-        weiClinic.dal.getStackById = jest.fn()
-            .mockReturnValue({ id: 1, idEnvelope: 3 });
-        weiClinic.dal.removeStackData = jest.fn()
-        weiClinic.dal.removeEnvelopeData = jest.fn()
+    it('The stack and the envelope are destroyed', async () => {
+        try {
+            weiClinic.dal.getStackById = jest.fn()
+                .mockReturnValue({ id: 1, idEnvelope: 3 });
+            weiClinic.dal.removeStackData = jest.fn()
+            weiClinic.dal.removeEnvelopeData = jest.fn()
 
-        await weiClinic.destroyStack(1)
+            await weiClinic.destroyStack(1)
 
-        expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
-        expect(weiClinic.dal.removeStackData).toHaveBeenCalledWith(1)
-        expect(weiClinic.dal.removeEnvelopeData).toHaveBeenCalledWith(3)
+            expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
+            expect(weiClinic.dal.removeStackData).toHaveBeenCalledWith(1)
+            expect(weiClinic.dal.removeEnvelopeData).toHaveBeenCalledWith(3)
+        } catch (error) {
+            expect(error).toBeNull()
+        }
     });
 
     it('The stack is not found', async () => {
-        weiClinic.dal.getStackById = jest.fn()
-        .mockReturnValue(null);
-
-        expect(() => { await weiClinic.destroyStack(3) }).toThrow("ds")
+        try {
+            weiClinic.dal.getStackById = jest.fn().mockReturnValue(null);
+            await weiClinic.destroyStack(3)
+            
+        } catch (error) {
+            expect(error).toBe("ds") //stack not found
+        }
         expect(weiClinic.dal.getStackById).toHaveBeenCalledTimes(1)
     });
 
