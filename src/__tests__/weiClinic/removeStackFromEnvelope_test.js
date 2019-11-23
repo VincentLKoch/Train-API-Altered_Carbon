@@ -11,56 +11,48 @@ describe('removeStackFromEnvelope test', () => {
 
     })
 
-    it('Test Working', () => {
-        const fakeStackMethods = {find(){return new CorticalStack(1, "M", "Toto", 8,1)}}
-        Dal.getStackData  = jest.fn().mockReturnValue(fakeStackMethods);
-        Dal.getEnvelopeData  = jest.fn()
+    it('Test Working', async () => {
+        weiClinic.dal.getStackById = jest.fn()
+        .mockReturnValue({ id: 1, idEnvelope: 1 });
+        weiClinic.dal.moveStackToEnvelope = jest.fn()
+        weiClinic.dal.moveEnvelopeToStack = jest.fn()
+        weiClinic.dal.getEnvelopeById = jest.fn()
+        .mockReturnValue({ id: 1, idStack: 1 });
 
-        Dal.saveStackData = jest.fn()
-        Dal.saveEnvelopeData = jest.fn()
+        await weiClinic.removeStackFromEnvelope(1)
 
-        weiClinic.removeStackFromEnvelope(1)
-
-        expect(Dal.getEnvelopeData).toHaveBeenCalledTimes(1)
-        expect(Dal.saveEnvelopeData).toHaveBeenCalledTimes(1)
-        expect(Dal.getStackData).toHaveBeenCalledTimes(1)
-        expect(Dal.saveStackData).toHaveBeenCalledTimes(1)
+        expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
+        expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
+        expect(weiClinic.dal.moveStackToEnvelope).toHaveBeenCalledWith(1, 1)
+        expect(weiClinic.dal.moveEnvelopeToStack).toHaveBeenCalledWith(1,1)
     });
     
-    it('Stack not found', () => {
-        const fakeStackMethods = {find(){return null}}
-        Dal.getStackData  = jest.fn().mockReturnValue(fakeStackMethods);
+    it('Stack not found', async () => {
+        weiClinic.dal.getStackById = jest.fn()
+        .mockReturnValue(null);
 
-        const fakeEnvelopeMethods = {find(){return new Envelope(1, "M", 8,1)}}
-        Dal.getEnvelopeData  = jest.fn().mockReturnValue(fakeEnvelopeMethods);
-
-
-        expect(() => { weiClinic.removeStackFromEnvelope(1) }).toThrow("rm1")
-        expect(Dal.getStackData).toHaveBeenCalledTimes(1)
-        expect(Dal.getEnvelopeData).toHaveBeenCalledTimes(1)
+        expect(() => { await weiClinic.removeStackFromEnvelope(1) }).toThrow("rm1")
+        expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
     });
 
-    it("Stack don't have envelope", () => {
-        const fakeStackMethods = {find(){return new CorticalStack(1, "M", "Toto", 8,null)}}
-        Dal.getStackData  = jest.fn().mockReturnValue(fakeStackMethods);
-        Dal.getEnvelopeData  = jest.fn();
+    it("Stack don't have envelope", async() => {
+        weiClinic.dal.getStackById = jest.fn()
+        .mockReturnValue({ id: 1, idEnvelope: null });
 
-        expect(() => { weiClinic.removeStackFromEnvelope(1) }).toThrow("rm2")
-        expect(Dal.getStackData).toHaveBeenCalledTimes(1)
-        expect(Dal.getEnvelopeData).toHaveBeenCalledTimes(1)
+        expect(() => { await eiClinic.removeStackFromEnvelope(1) }).toThrow("rm2")
+        expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
     });
 
-    it("Can't find stack's envelope", () => {
-        const fakeStackMethods = {find(){return new CorticalStack(1, "M", "Toto", 8,1)}}
-        Dal.getStackData  = jest.fn().mockReturnValue(fakeStackMethods);
-        const fakeEnvelopeMethods = {find(){return null}}
-        Dal.getEnvelopeData  = jest.fn().mockReturnValue(fakeEnvelopeMethods);
+    it("Can't find stack's envelope", async() => {
+        weiClinic.dal.getStackById = jest.fn()
+        .mockReturnValue({ id: 1, idEnvelope: 1 });
+        weiClinic.dal.moveStackToEnvelope = jest.fn()
+        weiClinic.dal.moveEnvelopeToStack = jest.fn()
+        weiClinic.dal.getEnvelopeById = jest.fn()
+        .mockReturnValue(null);
 
-
-
-
-        expect(() => { weiClinic.removeStackFromEnvelope(1) }).toThrow("rm3")
-        expect(Dal.getStackData).toHaveBeenCalledTimes(1)
-        expect(Dal.getEnvelopeData).toHaveBeenCalledTimes(1)
+        expect(() => { await weiClinic.removeStackFromEnvelope(1) }).toThrow("rm3")
+        expect(weiClinic.dal.getStackById).toHaveBeenCalledWith(1)
+        expect(weiClinic.dal.getEnvelopeById).toHaveBeenCalledWith(1)
     });
 })

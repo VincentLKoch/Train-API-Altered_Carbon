@@ -68,7 +68,7 @@ class WeiClinic {
                 throw "rm2"
             }
 
-            const envelope = await this.dal.getStackById(stack.idEnvelope)
+            const envelope = await this.dal.getEnvelopeById(stack.idEnvelope)
             //can't find envelope
             if (!envelope) {
                 throw "rm3"
