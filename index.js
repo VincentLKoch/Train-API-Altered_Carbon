@@ -1,6 +1,6 @@
 import 'regenerator-runtime/runtime'
 
-import app from './app'
+import app from './src/app'
 
 const port = 8081
 
